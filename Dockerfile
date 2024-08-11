@@ -3,7 +3,6 @@
 # Adjust NODE_VERSION as desired
 ARG NODE_VERSION=20.16.0
 FROM node:${NODE_VERSION}-alpine3.18 as base
-LABEL fly_launch_runtime="NestJS"
 # NestJS app lives here
 WORKDIR /app
 
