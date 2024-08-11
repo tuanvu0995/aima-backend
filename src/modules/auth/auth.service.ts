@@ -29,6 +29,10 @@ export class AuthService {
     return user;
   }
 
+  async validatePaload(payload: any): Promise<User | null> {
+    return this.userService.findById(payload.id);
+  }
+
   async createToken(user: User) {
     const payload = {
       email: user.email,
