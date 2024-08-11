@@ -27,7 +27,7 @@ export class CrudController<T extends CoreEntity> {
 
   @Get('/:id')
   @UseGuards(ApiAuthGuard)
-  async findById(@Query('id') id: number): Promise<T> {
+  async findById(@Param('id') id: number): Promise<T> {
     return await this.service.findById(id);
   }
 

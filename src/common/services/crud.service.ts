@@ -103,7 +103,6 @@ export class CrudService<T extends CoreEntity> {
     const removed = await this.repo.softDelete({
       id,
     } as any);
-    console.log(removed);
     if (!removed.affected) {
       this.logger.error(`Failed to remove ${this.repo.metadata.name}`);
       throw new BadRequestException(
