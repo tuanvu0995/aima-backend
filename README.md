@@ -41,7 +41,7 @@ The seed data includes:
     - users
     - products
     - suppliers
-    - sales
+    - sales (includes last 6 months products sales data)
 
 ## Running the app
 
