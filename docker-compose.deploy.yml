@@ -1,0 +1,39 @@
+version: '3.0'
+services:
+  postgres:
+    image: postgres
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+      TZ: 'GMT'
+      PGTZ: 'GMT'
+    ports:
+      - '5433:5432'
+    volumes:
+      - postgres_data:/data/postgres
+      - ./init-data.sh:/docker-entrypoint-initdb.d/init-data.sh
+    networks:
+      - default
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: backend
+    environment:
+      - PORT=3000
+      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/postgres
+      - JWT_SECRET_KEY=some_secret_key
+    ports:
+      - '3000:3000'
+    depends_on:
+      - postgres
+    networks:
+      - default
+
+volumes:
+  postgres_data:
+
+networks:
+  default:
