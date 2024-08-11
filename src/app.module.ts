@@ -2,7 +2,10 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './modules/auth';
-import { DatabaseModule } from './modules/database/database.module';
+import { DatabaseModule } from './modules/database';
+import { ProductModule } from './modules/product';
+import { SaleModule } from './modules/sale';
+import { SupplierModule } from './modules/supplier';
 import { UserModule } from './modules/user';
 
 @Module({
@@ -19,6 +22,9 @@ import { UserModule } from './modules/user';
     }),
     UserModule,
     AuthModule,
+    SaleModule,
+    ProductModule,
+    SupplierModule,
   ],
 })
 export class AppModule {}

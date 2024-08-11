@@ -43,8 +43,7 @@ export class UsersSeeder implements Seeder {
       user.password = await this.hashService.hash(user.password);
     }
 
-    const users = this.user.create(userData as any[]);
-    await this.user.save(users);
+    await this.user.save(this.user.create(userData as any[]));
     this.logger.log(`${userData.length} users created`);
   }
 

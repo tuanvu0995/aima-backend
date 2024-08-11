@@ -22,6 +22,10 @@ export class User extends CoreEntity {
   @Column({ default: false })
   verified: boolean;
 
-  @Column({ type: 'enum', enum: UserRole, default: UserRole.STAFF })
+  @Column({
+    type: 'enum',
+    enum: UserRole,
+    default: UserRole.STAFF,
+  })
   role: UserRole;
 }
