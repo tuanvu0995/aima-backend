@@ -75,7 +75,7 @@ export class CrudService<T extends CoreEntity> {
     return { items, total };
   }
 
-  async create(data: Partial<T>) {
+  async create(data: any) {
     const created = this.repo.create(data as any) as any;
     const saved = await this.repo.save(created);
     if (!saved) {
@@ -87,7 +87,7 @@ export class CrudService<T extends CoreEntity> {
     return saved as T;
   }
 
-  async update(id: number, data: Partial<T>) {
+  async update(id: number, data: any) {
     const found = await this.findById(id);
     const updated = await this.repo.save({ ...found, ...data });
     if (!updated) {

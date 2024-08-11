@@ -1,8 +1,10 @@
 import { CrudService } from '@common/services';
-import { Injectable } from '@nestjs/common';
+import { SupplierService } from '@modules/supplier';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as moment from 'moment';
 import { Repository, SelectQueryBuilder } from 'typeorm';
+import { UpdateProductDto } from './dtos/product.dto';
 import { Product } from './product.entity';
 
 @Injectable()
@@ -10,16 +12,54 @@ export class ProductService extends CrudService<Product> {
   constructor(
     @InjectRepository(Product)
     protected readonly productRepo: Repository<Product>,
+    protected readonly supplierService: SupplierService,
   ) {
     super(productRepo);
   }
 
-  /*
-  |--------------------------------------------------------------------------
-  | Monthly Sales Report Endpoint: This endpoint should return a list of products with their average monthly sales for a given month.
-  | This requires performing JOINs across tables, aggregate functions for sales data, and a WHERE clause to filter out products without sales.
-  |--------------------------------------------------------------------------
-  */
+  async create(data: UpdateProductDto) {
+    const exists = await this.exists({ sku: data.sku });
+    if (exists) {
+      this.logger.error(`SKU ${data.sku} already exists`);
+      throw new BadRequestException(`SKU ${data.sku} already exists`);
+    }
+
+    const supplier = await this.supplierService.findById(data.supplierId);
+    const product = await this.repo.save({
+      ...data,
+      supplier,
+    });
+    return product;
+  }
+
+  async update(id: number, data: UpdateProductDto) {
+    const product = await this.findById(id);
+    const supplier = await this.supplierService.findById(data.supplierId);
+
+    if (product.sku !== data.sku) {
+      const exists = await this.exists({ sku: data.sku });
+      if (exists) {
+        this.logger.error(`SKU ${data.sku} already exists`);
+        throw new BadRequestException(`SKU ${data.sku} already exists`);
+      }
+    }
+
+    delete data.supplierId;
+
+    const updated = await this.repo.update(id, {
+      ...product,
+      ...data,
+      supplier,
+    });
+    if (!updated) {
+      this.logger.error(`Failed to update ${this.repo.metadata.name}`);
+      throw new BadRequestException(
+        `Failed to update ${this.repo.metadata.name}`,
+      );
+    }
+    return await this.findById(id);
+  }
+
   async getMonthlySalesReport(date: Date) {
     const startDate = moment(date).startOf('month').format('YYYY-MM-DD');
     const endDate = moment(date).endOf('month').format('YYYY-MM-DD');
@@ -46,13 +86,6 @@ export class ProductService extends CrudService<Product> {
     return { total, items };
   }
 
-  /*
-  |--------------------------------------------------------------------------
-  | Restock Report Endpoint: This endpoint should return a list of products that need to be restocked.
-  | The restock level is determined by the average monthly sales of each product, current inventory, and a predefined minimum stock threshold.
-  | This requires performing JOINs across tables, aggregate functions for sales data, and a WHERE clause to filter out products above the threshold.
-  |--------------------------------------------------------------------------
-  */
   async getRestockReport() {
     const monthlySalesSubQuery = (qb: SelectQueryBuilder<Product>): string => {
       return qb
