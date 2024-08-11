@@ -2,7 +2,7 @@ import { CoreEntity } from '@common/entities';
 import { Product } from '@modules/product/product.entity';
 import { Column, Entity, OneToMany, Relation } from 'typeorm';
 
-@Entity()
+@Entity('suppliers')
 export class Supplier extends CoreEntity {
   @Column()
   name: string;

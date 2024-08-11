@@ -2,7 +2,7 @@ import { CoreEntity } from '@common/entities';
 import { Product } from '@modules/product/product.entity';
 import { Column, Entity, Index, ManyToOne, Relation } from 'typeorm';
 
-@Entity()
+@Entity('sales')
 export class Sale extends CoreEntity {
   @ManyToOne(() => Product, (product) => product.sales)
   @Index()
@@ -11,6 +11,6 @@ export class Sale extends CoreEntity {
   @Column()
   quantity: number;
 
-  @Column()
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
   price: number;
 }

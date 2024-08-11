@@ -1,3 +1,4 @@
+import { ReportModule } from '@modules/report';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
@@ -25,6 +26,7 @@ import { UserModule } from './modules/user';
     SaleModule,
     ProductModule,
     SupplierModule,
+    ReportModule,
   ],
 })
 export class AppModule {}
