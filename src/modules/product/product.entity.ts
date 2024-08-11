@@ -26,12 +26,15 @@ export class Product extends CoreEntity {
 
   @Factory((faker) =>
     faker.helpers.rangeToNumber({
-      min: 0,
+      min: 500,
       max: 1500,
     }),
   )
   @Column()
   stock: number;
+
+  @Column({ default: 40 })
+  restockThreshold: number;
 
   @ManyToOne(() => Supplier, (supplier) => supplier.products)
   @Index()

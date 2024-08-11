@@ -12,6 +12,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         migrations: ['dist/migrations/*{.ts,.js}'],
         autoLoadEntities: true,
         synchronize: false,
+        logging: config.get('NODE_ENV') !== 'production',
       }),
       imports: [ConfigModule],
       inject: [ConfigService],

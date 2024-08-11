@@ -20,12 +20,11 @@ export class ProductSeeder implements Seeder {
     for (const supplier of suppliers) {
       // from 10 to 50 products
       const count = Math.floor(Math.random() * 40) + 10;
-      const products = DataFactory.createForClass(Product).generate(count, {
-        supplier,
-      });
+      const products = DataFactory.createForClass(Product).generate(count);
 
       products.forEach((product) => {
         product.supplier = supplier;
+        product.restockThreshold = 50;
       });
 
       await this.product.save(this.product.create(products));
