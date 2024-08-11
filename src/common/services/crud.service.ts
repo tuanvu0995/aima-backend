@@ -1,4 +1,9 @@
+import { PaginationOptionsDto } from '@common/dtos';
 import { CoreEntity } from '@common/entities';
+import {
+  applyQueryRelations,
+  applyQuerySortOrder,
+} from '@common/query-builder';
 import {
   BadRequestException,
   Injectable,
@@ -43,7 +48,7 @@ export class CrudService<T extends CoreEntity> {
     return await this.findByField({ id } as FindOptionsWhere<T>, relations);
   }
 
-  async findAll(providerId: number, relations: string[] = []): Promise<T[]> {
+  async findAll(relations: string[] = []): Promise<T[]> {
     this.logger.debug(`Finding all ${this.repo.metadata.name}`);
     return await this.repo.find({
       relations,
@@ -51,7 +56,7 @@ export class CrudService<T extends CoreEntity> {
   }
 
   async paginate(
-    options: any,
+    options: PaginationOptionsDto,
     relations: string[] = [],
   ): Promise<{
     items: T[];
@@ -61,15 +66,25 @@ export class CrudService<T extends CoreEntity> {
     const alias = this.repo.metadata.name;
     const query = this.repo.createQueryBuilder(alias);
 
-    // applyQueryRelations(query, relations);
-    // applyQueryFilter(query, options.filter);
-    // applyQuerySortOrder(query, options.sort);
-    console.log('relations', relations);
+    applyQueryRelations(query, relations);
+    applyQuerySortOrder(query, options);
 
     query.skip(options.skip).take(options.take);
 
     const [items, total] = await query.getManyAndCount();
     return { items, total };
+  }
+
+  async create(data: Partial<T>) {
+    const created = this.repo.create(data as any) as any;
+    const saved = await this.repo.save(created);
+    if (!saved) {
+      this.logger.error(`Failed to create ${this.repo.metadata.name}`);
+      throw new BadRequestException(
+        `Failed to create ${this.repo.metadata.name}`,
+      );
+    }
+    return saved as T;
   }
 
   async update(id: number, data: Partial<T>) {
