@@ -1,0 +1,25 @@
+name: CI to Verify
+
+# Controls when the action will run. Triggers the workflow on pull request
+
+on: [pull_request]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      - name: Use Node.js 16
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build
+        run: pnpm run build
