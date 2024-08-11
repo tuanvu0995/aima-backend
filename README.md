@@ -27,7 +27,7 @@ $ npm run migration:run
 
 ## Seeding data
 
-We have some seed data for testing. You can run the following command to seed the data:
+We have some seed data for testing.You can run the following command to seed the data:
 
 ```bash
 $ npm run seed
@@ -36,6 +36,12 @@ $ npm run seed
 
 $ npm run seed:refresh
 ```
+
+The seed data includes:
+    - users
+    - products
+    - suppliers
+    - sales
 
 ## Running the app
 
